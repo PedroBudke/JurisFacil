@@ -1,25 +1,46 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline'; // Remove estilos padrão do navegador
+import theme from './theme/theme';
+
+// Componentes
+import Navbar from './componnets/Navbar';
+import Footer from './componnets/Footer';
+import Home from './pages/Home';
+import DuvidasFrequentes from './pages/DuvidasFrequentes';
+import EnvieSuaDuvida from './pages/EnvieSuaDuvida';
+import Sobre from './pages/Sobre';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Navbar />
+          <main
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center', 
+              alignItems: 'center',    
+              padding: '1rem',
+              width: '100%',
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/sobre" element={<Sobre />} />
+              <Route path="/duvidas-frequentes" element={<DuvidasFrequentes />} />
+              <Route path="/envie-sua-duvida" element={<EnvieSuaDuvida />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
