@@ -10,20 +10,33 @@ const EnvieSuaDuvida = () => {
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setStatus('sending');
 
-    // Simula envio bem-sucedido após 1 segundo
-    setTimeout(() => {
-      setStatus('success');
-      setFormData({ nome: '', email: '', mensagem: '' });
-    }, 1000);
+    try {
+      const response = await fetch('https://formspree.io/f/mnnrkbvb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ nome: '', email: '', mensagem: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      setStatus('error');
+    }
   };
 
   return (
@@ -35,9 +48,17 @@ const EnvieSuaDuvida = () => {
         Tem alguma pergunta sobre direito? Preencha o formulário abaixo e responderemos o mais breve possível.
       </Typography>
 
+      {/* Mensagem de sucesso */}
       {status === 'success' && (
         <Alert severity="success" sx={{ mb: 2 }}>
           Sua mensagem foi enviada com sucesso! Em breve entraremos em contato.
+        </Alert>
+      )}
+
+      {/* Mensagem de erro */}
+      {status === 'error' && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Ocorreu um erro ao enviar sua dúvida. Tente novamente ou entre em contato por e-mail.
         </Alert>
       )}
 
@@ -50,27 +71,14 @@ const EnvieSuaDuvida = () => {
           onChange={handleChange}
           margin="normal"
           required
-          autoComplete="new-password" // ← Previne sugestões erradas
-          InputLabelProps={{
-            style: { color: '#B0B0B0' }, // Rótulo cinza claro
-          }}
-          InputProps={{
-            style: {
-              color: '#FFFFFF', // Texto branco dentro do campo
-              backgroundColor: '#0E3A6E', // Fundo azul escuro
-            },
-          }}
+          autoComplete="new-password"
+          InputLabelProps={{ style: { color: '#B0B0B0' } }}
+          InputProps={{ style: { color: '#FFFFFF', backgroundColor: '#0E3A6E' } }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#64B5F6', // Borda azul clara por padrão
-              },
-              '&:hover fieldset': {
-                borderColor: '#D4AF37', // Borda dourada no hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#D4AF37', // Borda dourada no foco
-              },
+              '& fieldset': { borderColor: '#64B5F6' },
+              '&:hover fieldset': { borderColor: '#D4AF37' },
+              '&.Mui-focused fieldset': { borderColor: '#D4AF37' },
             },
           }}
         />
@@ -85,26 +93,13 @@ const EnvieSuaDuvida = () => {
           margin="normal"
           required
           autoComplete="new-password"
-          InputLabelProps={{
-            style: { color: '#B0B0B0' },
-          }}
-          InputProps={{
-            style: {
-              color: '#FFFFFF',
-              backgroundColor: '#0E3A6E',
-            },
-          }}
+          InputLabelProps={{ style: { color: '#B0B0B0' } }}
+          InputProps={{ style: { color: '#FFFFFF', backgroundColor: '#0E3A6E' } }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#64B5F6',
-              },
-              '&:hover fieldset': {
-                borderColor: '#D4AF37',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#D4AF37',
-              },
+              '& fieldset': { borderColor: '#64B5F6' },
+              '&:hover fieldset': { borderColor: '#D4AF37' },
+              '&.Mui-focused fieldset': { borderColor: '#D4AF37' },
             },
           }}
         />
@@ -120,26 +115,13 @@ const EnvieSuaDuvida = () => {
           margin="normal"
           required
           autoComplete="new-password"
-          InputLabelProps={{
-            style: { color: '#B0B0B0' },
-          }}
-          InputProps={{
-            style: {
-              color: '#FFFFFF',
-              backgroundColor: '#0E3A6E',
-            },
-          }}
+          InputLabelProps={{ style: { color: '#B0B0B0' } }}
+          InputProps={{ style: { color: '#FFFFFF', backgroundColor: '#0E3A6E' } }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#64B5F6',
-              },
-              '&:hover fieldset': {
-                borderColor: '#D4AF37',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#D4AF37',
-              },
+              '& fieldset': { borderColor: '#64B5F6' },
+              '&:hover fieldset': { borderColor: '#D4AF37' },
+              '&.Mui-focused fieldset': { borderColor: '#D4AF37' },
             },
           }}
         />
@@ -147,21 +129,13 @@ const EnvieSuaDuvida = () => {
         <Button
           type="submit"
           variant="contained"
-          disabled={status === 'sending' || status === 'success'}
+          disabled={status === 'sending'}
           sx={{
             mt: 2,
-            backgroundColor: '#D4AF37', // Dourado
-            color: '#0A2E5C', // Texto escuro
+            backgroundColor: '#D4AF37',
+            color: '#0A2E5C',
             fontWeight: 'bold',
-            padding: '10px 24px',
-            fontSize: '1.05rem',
-            borderRadius: 2,
-            '&:hover': {
-              backgroundColor: '#B8860B', // Dourado mais escuro
-              transform: 'scale(1.02)',
-              boxShadow: '0 4px 8px rgba(212, 175, 55, 0.3)',
-            },
-            transition: 'all 0.25s ease',
+            '&:hover': { backgroundColor: '#B8860B' },
           }}
         >
           {status === 'sending' ? 'Enviando...' : 'Enviar'}
